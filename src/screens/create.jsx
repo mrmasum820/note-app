@@ -5,6 +5,7 @@ import Input from '../components/input';
 import Button from '../components/button';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../../App';
+import { showMessage } from 'react-native-flash-message';
 
 const noteColorOptions = ['red', 'blue', 'green'];
 
@@ -14,7 +15,7 @@ export default function Create({ navigation, user }) {
     const [noteColor, setNoteColor] = useState('blue')
     const [loading, setLoading] = useState(false)
 
-    const onPressSubmit = async () => {
+    const onPressCreate = async () => {
         setLoading(true)
         try {
             await addDoc(collection(db, "notes"), {
@@ -24,6 +25,11 @@ export default function Create({ navigation, user }) {
                 uid: user.uid
             });
             setLoading(false)
+            showMessage({
+                message: 'Note created successfully',
+                type: 'success'
+            });
+            navigation.goBack();
         } catch (error) {
             console.log(error)
             setLoading(false)
@@ -60,7 +66,7 @@ export default function Create({ navigation, user }) {
             {loading ? (
                 <ActivityIndicator />
             ) : (
-                <Button customStyles={{ width: '90%', alignSelf: 'center' }} title="submit" onPress={onPressSubmit} />
+                <Button customStyles={{ width: '90%', alignSelf: 'center' }} title="submit" onPress={onPressCreate} />
             )}
 
         </SafeAreaView>
